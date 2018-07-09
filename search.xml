@@ -3,6 +3,69 @@
   
     
     <entry>
+      <title>test tag</title>
+      <link href="/2018/07/10/test-tag/"/>
+      <url>/2018/07/10/test-tag/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> caaca </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> test </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>测试标签</title>
+      <link href="/2018/07/10/%E6%B5%8B%E8%AF%95%E6%A0%87%E7%AD%BE/"/>
+      <url>/2018/07/10/%E6%B5%8B%E8%AF%95%E6%A0%87%E7%AD%BE/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> testst </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> test </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Java8新特性</title>
+      <link href="/2018/07/10/Java8%E6%96%B0%E7%89%B9%E6%80%A7/"/>
+      <url>/2018/07/10/Java8%E6%96%B0%E7%89%B9%E6%80%A7/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> java8 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>Hexo+GitPage搭建个人博客</title>
       <link href="/2018/07/10/Hexo-GitPage%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
       <url>/2018/07/10/Hexo-GitPage%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
