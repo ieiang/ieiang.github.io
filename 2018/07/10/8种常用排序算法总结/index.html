@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="ieiang">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="ieiang">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog,java,ieiang,blog">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>8种常用排序算法总结 · ieiang&#39;blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >ieiang&#39;blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">8种常用排序算法总结</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>ieiang'blog</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(https://source.unsplash.com/user/erondu/2560x1423)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            8种常用排序算法总结
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "算法">算法</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">4.6k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/07/10</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="稳定性"><a href="#稳定性" class="headerlink" title="稳定性"></a>稳定性</h2><blockquote>
+<p>定义：排序前后两个相等的数相对位置不变，则算法稳定。<br>好处：从一个键上排序，然后再从另一个键上排序，第一个键排序的结果可以为第二个键排序所用。</p>
+</blockquote>
+<h3 id="各排序算法的稳定性"><a href="#各排序算法的稳定性" class="headerlink" title="各排序算法的稳定性"></a>各排序算法的稳定性</h3><p><strong>稳定</strong>：基数排序、冒泡排序、直接插入排序、折半插入排序（二分）、归并排序<br><strong>非稳定</strong>：堆排序、快速排序、希尔排序、直接选择排序</p>
+<a id="more"></a>
+<hr>
+<h2 id="各排序算法优劣"><a href="#各排序算法优劣" class="headerlink" title="各排序算法优劣"></a>各排序算法优劣</h2><p><img src="https://github.com/ieiang/ieiang.github.io/blob/master/img/2016-07-15_%E5%B8%B8%E7%94%A8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95.png?raw=true" alt="各排序算法的优劣"></p>
+<hr>
+<h2 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h2><blockquote>
+<p>影响排序的因素有很多，平均时间复杂度低的算法并不一定就是最优的。相反，有时平均时间复杂度高的算法可能更适合某些特殊情况。同时，选择算法时还得考虑它的可读性，以利于软件的维护。一般而言，需要考虑的因素有以下四点：<br>1．待排序的记录数目n的大小；<br>2．记录本身数据量的大小，也就是记录中除关键字外的其他信息量的大小；<br>3．关键字的结构及其分布情况；<br>4．对排序稳定性的要求。</p>
+</blockquote>
+<blockquote>
+<p>设待排序元素的个数为n.<br>1）当n较大，则应采用时间复杂度为O(nlog2n)的排序方法：快速排序、堆排序或归并排序序。<br>快速排序：是目前基于比较的内部排序中被认为是最好的方法，当待排序的关键字是随机分布时，快速排序的平均时间最短；<br>堆排序 ： 如果内存空间允许且要求稳定性的，<br>归并排序：它有一定数量的数据移动，所以我们可能过与插入排序组合，先获得一定长度的序列，然后再合并，在效率上将有所提高。<br>2） 当n较大，内存空间允许，且要求稳定性 =》归并排序<br>3）当n较小，可采用直接插入或直接选择排序。<br>直接插入排序：当元素分布有序，直接插入排序将大大减少比较次数和移动记录的次数。<br>直接选择排序 ：元素分布有序，如果不要求稳定性，选择直接选择排序<br>5）一般不使用或不直接使用传统的冒泡排序。<br>6）基数排序<br>它是一种稳定的排序算法，但有一定的局限性：<br>　　1、关键字可分解。<br>　　2、记录的关键字位数较少，如果密集更好<br>　　3、如果是数字时，最好是无符号的，否则将增加相应的映射复杂度，可先将其正负分开排序。</p>
+</blockquote>
+<h3 id="1-插入排序"><a href="#1-插入排序" class="headerlink" title="1.插入排序"></a>1.插入排序</h3><h4 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、已经有序的小序列的基础上，一次插入一个元素；<br>2、想要插入的元素和已经有序的最大者开始比起，如果比它大则直接插入在其后面，否则一直往前找直到找到它该插入的位置；<br>3、如果碰见一个和插入元素相 等的，那么插入元素把想插入的元素放在相等元素的后面；<br>4、相等元素的前后顺序没有改变；<br>5、稳定排序算法。</p>
+</blockquote>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code>/**
+ * 插入排序
+ * &lt;p&gt;
+ * 1. 从第一个元素开始，该元素可以认为已经被排序
+ * 2. 取出下一个元素，在已经排序的元素序列中从后向前扫描
+ * 3. 如果该元素（已排序）大于新元素，将该元素移到下一位置
+ * 4. 重复步骤3，直到找到已排序的元素小于或者等于新元素的位置
+ * 5. 将新元素插入到该位置后
+ * 6. 重复步骤2~5
+ *
+ * @param arr 待排序数组
+ */
+public static void insertionSort(int[] arr) {
+    for (int i = 0; i &lt; arr.length - 1; i++) {
+        for (int j = i + 1; j &gt; 0; j--) {
+            if (arr[j - 1] &lt;= arr[j]) break;
+            int temp = arr[j];
+            arr[j] = arr[j - 1];
+            arr[j - 1] = temp;
+            System.out.println(&quot;Sorting:&quot; + Arrays.toString(arr));
+        }
+    }
+}
+</code></pre><h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p><strong>优点</strong>：稳定，快<br><strong>缺点</strong>：比较次数不一定，比较次数越少，插入点后的数据移动越多，特别是当数据总量庞大的时候，但用链表可以解决这个问题</p>
+</blockquote>
+<h3 id="2-选择排序"><a href="#2-选择排序" class="headerlink" title="2.选择排序"></a>2.选择排序</h3><h4 id="算法描述-1"><a href="#算法描述-1" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、每个位置选择当前元素最小的；<br>2、在一趟选择中，如果当前元素比一个元素小，而该小的元素又出现在一个和当前元素相等的元素后面，那么交换后稳定性就被破坏了；<br>3、举个例子，序列5 8 5 2 9， 我们知道第一遍选择第1个元素5会和2交换，那么原序列中2个5的相对前后顺序就被破坏了；<br>4、不稳定的排序算法。</p>
+</blockquote>
+<h4 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code>/**
+ * 选择排序
+ *
+ * 1. 从待排序序列中，找到关键字最小的元素；
+ * 2. 如果最小元素不是待排序序列的第一个元素，将其和第一个元素互换；
+ * 3. 从余下的 N - 1 个元素中，找出关键字最小的元素，重复①、②步，直到排序结束。
+ *    仅增量因子为1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
+ * @param arr  待排序数组
+ */
+public static void selectionSort(int[] arr){
+    for(int i = 0; i &lt; arr.length-1; i++){
+        int min = i;
+        for(int j = i+1; j &lt; arr.length; j++){    //选出之后待排序中值最小的位置
+            if(arr[j] &lt; arr[min]){
+                min = j;
+            }
+        }
+        if(min != i){
+            int temp = arr[min];      //交换操作
+            arr[min] = arr[i];
+            arr[i] = temp;
+            System.out.println(&quot;Sorting:  &quot; + Arrays.toString(arr));
+        }
+    }
+}
+</code></pre><h4 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p><strong>优点</strong>：移动数据的次数已知（n-1次）<br><strong>缺点</strong>：比较次数多</p>
+</blockquote>
+<h3 id="3-冒泡排序"><a href="#3-冒泡排序" class="headerlink" title="3.冒泡排序"></a>3.冒泡排序</h3><h4 id="算法描述-2"><a href="#算法描述-2" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、小的元素往前调或者把大的元素往后调；<br>2、比较是相邻的两个元素比较，交换也发生在这两个元素之间；<br>3、稳定排序算法。</p>
+</blockquote>
+<h4 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code> /**
+ * 冒泡排序
+ *
+ * 1. 比较相邻的元素。如果第一个比第二个大，就交换他们两个。
+ * 2. 对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对。这步做完后，最后的元素会是最大的数。
+ * 3. 针对所有的元素重复以上的步骤，除了最后一个。
+ * 4. 持续每次对越来越少的元素重复上面的步骤①~③，直到没有任何一对数字需要比较。
+ * @param arr  待排序数组
+ */
+public static void bubbleSort(int[] arr){
+    for (int i = arr.length; i &gt; 0; i--) {      //外层循环移动游标
+        for(int j = 0; j &lt; i &amp;&amp; (j+1) &lt; i; j++){    //内层循环遍历游标及之后(或之前)的元素
+            if(arr[j] &gt; arr[j+1]){
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+                System.out.println(&quot;Sorting: &quot; + Arrays.toString(arr));
+            }
+        }
+    }
+}
+</code></pre><h4 id="优缺点-2"><a href="#优缺点-2" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p><strong>优点</strong>：稳定<br><strong>缺点</strong>：慢，每次只能移动相邻两个数据</p>
+</blockquote>
+<h3 id="4-快速排序"><a href="#4-快速排序" class="headerlink" title="4.快速排序"></a>4.快速排序</h3><h4 id="算法描述-3"><a href="#算法描述-3" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、两个方向，左边的i下标一直往右走，当a[i] &lt;=<br>a[center_index]，其中center_index是中枢元素的数组下标，一般取为数组第0个元素。而右边的j下标一直往左走，当a[j] &gt; a[center_index]；<br>2、如果i和j都走不动了，i &lt;= j, 交换a[i]和a[j],重复上面的过程，直到i&gt;j；<br>3、交换a[j]和a[center_index]，完成一趟快速排序；<br>4、在中枢元素和a[j]交换的时候，很有可能把前面的元素的稳定性打乱，比如序列为 5 3 3 4 3 8 9 10 11， 现在中枢元素5和3(第5个元素，下标从1开始计)交换就会把元素3的稳定性打乱；<br>5、不稳定发生在中枢元素和a[j] 交换的时刻；<br>6、不稳定的排序算法。</p>
+</blockquote>
+<h4 id="代码实现-3"><a href="#代码实现-3" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code> /**
+ * 快速排序（递归）
+ *
+ * 1. 从数列中挑出一个元素，称为&quot;基准&quot;（pivot）。
+ * 2. 重新排序数列，所有比基准值小的元素摆放在基准前面，所有比基准值大的元素摆在基准后面（相同的数可以到任一边）。在这个分区结束之后，该基准就处于数列的中间位置。这个称为分区（partition）操作。
+ * 3. 递归地（recursively）把小于基准值元素的子数列和大于基准值元素的子数列排序。
+ * @param arr   待排序数组
+ * @param low   左边界
+ * @param high  右边界
+ */
+public static void quickSort(int[] arr, int low, int high){
+    if(arr.length &lt;= 0) return;
+    if(low &gt;= high) return;
+    int left = low;
+    int right = high;
+    int temp = arr[left];   //挖坑1：保存基准的值
+    while (left &lt; right){
+        while(left &lt; right &amp;&amp; arr[right] &gt;= temp){  //坑2：从后向前找到比基准小的元素，插入到基准位置坑1中
+            right--;
+        }
+        arr[left] = arr[right];
+        while(left &lt; right &amp;&amp; arr[left] &lt;= temp){   //坑3：从前往后找到比基准大的元素，放到刚才挖的坑2中
+            left++;
+        }
+        arr[right] = arr[left];
+    }
+    arr[left] = temp;   //基准值填补到坑3中，准备分治递归快排
+    System.out.println(&quot;Sorting: &quot; + Arrays.toString(arr));
+    quickSort(arr, low, left-1);
+    quickSort(arr, left+1, high);
+}
+</code></pre><h4 id="优缺点-3"><a href="#优缺点-3" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p><strong>优点</strong>：极快，数据移动少.<br><strong>缺点</strong>：不稳定</p>
+</blockquote>
+<h3 id="5-归并排序"><a href="#5-归并排序" class="headerlink" title="5.归并排序"></a>5.归并排序</h3><h4 id="算法描述-4"><a href="#算法描述-4" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、把序列递归地分成短序列，递归出口是短序列只有1个元素(认为直接有序)或者2个序列(1次比较和交换),然后把各个有序的短序列合并成一个有序的长序列，不断合并直到原序列全部排好序；<br>2、合并过程中我们可以保证如果两个当前元素相等时，我们把处在前面的序列的元素保存在结 果序列的前面，这样就保证了稳定性；<br>3、稳定排序算法。</p>
+</blockquote>
+<h4 id="代码实现-4"><a href="#代码实现-4" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code>/**
+ * 归并排序（递归）
+ *
+ * 1. 将序列每相邻两个数字进行归并操作，形成 floor(n/2)个序列，排序后每个序列包含两个元素；
+ * 2. 将上述序列再次归并，形成 floor(n/4)个序列，每个序列包含四个元素；
+ * 3. 重复步骤2，直到所有元素排序完毕。
+ * @param arr     待排序数组
+ */
+public static int[] mergingSort(int[] arr){
+    if(arr.length &lt;= 1) return arr;
+    int num = arr.length &gt;&gt; 1;
+    int[] leftArr = Arrays.copyOfRange(arr, 0, num);
+    int[] rightArr = Arrays.copyOfRange(arr, num, arr.length);
+    System.out.println(&quot;split two array: &quot; + Arrays.toString(leftArr) + &quot; And &quot; + Arrays.toString(rightArr));
+    return mergeTwoArray(mergingSort(leftArr), mergingSort(rightArr));      //不断拆分为最小单元，再排序合并
+}
+private static int[] mergeTwoArray(int[] arr1, int[] arr2){
+    int i = 0, j = 0, k = 0;
+    int[] result = new int[arr1.length + arr2.length];  //申请额外的空间存储合并之后的数组
+    while(i &lt; arr1.length &amp;&amp; j &lt; arr2.length){      //选取两个序列中的较小值放入新数组
+        if(arr1[i] &lt;= arr2[j]){
+            result[k++] = arr1[i++];
+        }else{
+            result[k++] = arr2[j++];
+        }
+    }
+    while(i &lt; arr1.length){     //序列1中多余的元素移入新数组
+        result[k++] = arr1[i++];
+    }
+    while(j &lt; arr2.length){     //序列2中多余的元素移入新数组
+        result[k++] = arr2[j++];
+    }
+    System.out.println(&quot;Merging: &quot; + Arrays.toString(result));
+    return result;
+}
+</code></pre><h4 id="优缺点-4"><a href="#优缺点-4" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p>归并排序是一种非就地排序，将需要与待排序序列一样多的辅助空间。在使用它对两个己有序的序列归并，将有无比的优势。其时间复杂度无论是在最好情况下还是在最坏情况下均是O(nlog2n)。对数据的有序性不敏感。若数据节点数据量大，那将不适合。但可改造成索引操作，效果将非常出色</p>
+</blockquote>
+<h3 id="6-希尔排序"><a href="#6-希尔排序" class="headerlink" title="6.希尔排序"></a>6.希尔排序</h3><h4 id="算法描述-5"><a href="#算法描述-5" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、按照不同步长对元素进行插入排序；<br>2、当刚开始元素很无序的时候，步长最大，所以插入排序的元素个数很少，速度很快；<br>3、当元素基本有序了，步长很小， 插入排序对于有序的序列效率很高；<br>4、所以，希尔排序的时间复杂度会比o(n^2)好一些<br>由于多次插入排序，我们知道一次插入排序是稳定的，不会改变相同元 素的相对顺序，但在不同的插入排序过程中，相同的元素可能在各自的插入排序中移动，最后其稳定性就会被打乱；<br>5、不稳定的排序算法。</p>
+</blockquote>
+<h4 id="代码实现-5"><a href="#代码实现-5" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code> /**
+ * 希尔排序
+ *
+ * 1. 选择一个增量序列t1，t2，…，tk，其中ti&gt;tj，tk=1；（一般初次取数组半长，之后每次再减半，直到增量为1）
+ * 2. 按增量序列个数k，对序列进行k 趟排序；
+ * 3. 每趟排序，根据对应的增量ti，将待排序列分割成若干长度为m 的子序列，分别对各子表进行直接插入排序。
+ *    仅增量因子为1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
+ * @param arr  待排序数组
+ */
+public static void shellSort(int[] arr){
+    int gap = arr.length / 2;
+    for (; gap &gt; 0; gap /= 2) {      //不断缩小gap，直到1为止
+        for (int j = 0; (j+gap) &lt; arr.length; j++){     //使用当前gap进行组内插入排序
+            for(int k = 0; (k+gap)&lt; arr.length; k += gap){
+                if(arr[k] &gt; arr[k+gap]) {
+                    int temp = arr[k+gap];      //交换操作
+                    arr[k+gap] = arr[k];
+                    arr[k] = temp;
+                    System.out.println(&quot;    Sorting:  &quot; + Arrays.toString(arr));
+                }
+            }
+        }
+    }
+}
+</code></pre><h4 id="优缺点-5"><a href="#优缺点-5" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p><strong>优点</strong>：快，数据移动少<br><strong>缺点</strong>：不稳定，d的取值是多少，应取多少个不同的值，都无法确切知道，只能凭经验来取</p>
+</blockquote>
+<h3 id="7-基数排序"><a href="#7-基数排序" class="headerlink" title="7.基数排序"></a>7.基数排序</h3><h4 id="算法描述-6"><a href="#算法描述-6" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、按照低位先排序，然后收集；再按照高位排序，然后再收集；依次类推，直到最高位；<br>2、有时候有些属性是有优先级顺序的，先按低优先级排序，再按高优 先级排序，最后的次序就是高优先级高的在前，高优先级相同的低优先级高的在前；<br>3、用于整数；<br>4、需要较多的存储空间；<br>5、基于分别排序，分别收集；<br>6、稳定排序算法。</p>
+</blockquote>
+<h4 id="代码实现-6"><a href="#代码实现-6" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code>  /**
+ * 基数排序（LSD 从低位开始）
+ *
+ * 基数排序适用于：
+ *  (1)数据范围较小，建议在小于1000
+ *  (2)每个数值都要大于等于0
+ *
+ * 1. 取得数组中的最大数，并取得位数；
+ * 2. arr为原始数组，从最低位开始取每个位组成radix数组；
+ * 3. 对radix进行计数排序（利用计数排序适用于小范围数的特点）
+ * @param arr     待排序数组
+ */
+public static void radixSort(int[] arr){
+    if(arr.length &lt;= 1) return;
+    //取得数组中的最大数，并取得位数
+    int max = 0;
+    for(int i = 0; i &lt; arr.length; i++){
+        if(max &lt; arr[i]){
+            max = arr[i];
+        }
+    }
+    int maxDigit = 1;
+    while(max / 10 &gt; 0){
+        maxDigit++;
+        max = max / 10;
+    }
+    System.out.println(&quot;maxDigit: &quot; + maxDigit);
+
+    //申请一个桶空间
+    int[][] buckets = new int[10][arr.length];
+    int base = 10;
+    //从低位到高位，对每一位遍历，将所有元素分配到桶中
+    for(int i = 0; i &lt; maxDigit; i++){
+        int[] bktLen = new int[10];        //存储各个桶中存储元素的数量
+        //分配：将所有元素分配到桶中
+        for(int j = 0; j &lt; arr.length; j++){
+            int whichBucket = (arr[j] % base) / (base / 10);
+            buckets[whichBucket][bktLen[whichBucket]] = arr[j];
+            bktLen[whichBucket]++;
+        }
+        //收集：将不同桶里数据挨个捞出来,为下一轮高位排序做准备,由于靠近桶底的元素排名靠前,因此从桶底先捞
+        int k = 0;
+        for(int b = 0; b &lt; buckets.length; b++){
+            for(int p = 0; p &lt; bktLen[b]; p++){
+                arr[k++] = buckets[b][p];
+            }
+        }
+        System.out.println(&quot;Sorting: &quot; + Arrays.toString(arr));
+        base *= 10;
+    }
+}
+</code></pre><h4 id="优缺点-6"><a href="#优缺点-6" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p><strong>优点</strong>：稳定</p>
+</blockquote>
+<h3 id="8-堆排序"><a href="#8-堆排序" class="headerlink" title="8.堆排序"></a>8.堆排序</h3><h4 id="算法描述-7"><a href="#算法描述-7" class="headerlink" title="算法描述"></a>算法描述</h4><blockquote>
+<p>1、是选择排序的一种；<br>2、堆的结构是节点i的孩子为2<em>i和2</em>i+1节点，大顶堆要求父节点大于等于其2个子节点，小顶堆要求父节点小于等于其2个子节点，是完全二叉树；<br>3、在一个长为n 的序列，堆排序的过程是从第n/2开始和其子节点共3个值选择最大(大顶堆)或者最小(小顶堆),这3个元素之间的选择当然不会破坏稳定性。但当为n /2-1, n/2-2, …1这些个父节点选择元素时，就会破坏稳定性。有可能第n/2个父节点交换把后面一个元素交换过去了，而第n/2-1个父节点把后面一个相同的元素没 有交换，那么这2个相同的元素之间的稳定性就被破坏了；<br>4、不稳定的排序算法。</p>
+</blockquote>
+<h4 id="代码实现-7"><a href="#代码实现-7" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code>  /**
+ * 堆排序
+ *
+ * 1. 先将初始序列K[1..n]建成一个大顶堆, 那么此时第一个元素K1最大, 此堆为初始的无序区.
+ * 2. 再将关键字最大的记录K1 (即堆顶, 第一个元素)和无序区的最后一个记录 Kn 交换, 由此得到新的无序区K[1..n−1]和有序区K[n], 且满足K[1..n−1].keys⩽K[n].key
+ * 3. 交换K1 和 Kn 后, 堆顶可能违反堆性质, 因此需将K[1..n−1]调整为堆. 然后重复步骤②, 直到无序区只有一个元素时停止.
+ * @param arr  待排序数组
+ */
+public static void heapSort(int[] arr){
+    for(int i = arr.length; i &gt; 0; i--){
+        max_heapify(arr, i);
+
+        int temp = arr[0];      //堆顶元素(第一个元素)与Kn交换
+        arr[0] = arr[i-1];
+        arr[i-1] = temp;
+    }
+}
+
+private static void max_heapify(int[] arr, int limit){
+    if(arr.length &lt;= 0 || arr.length &lt; limit) return;
+    int parentIdx = limit / 2;
+
+    for(; parentIdx &gt;= 0; parentIdx--){
+        if(parentIdx * 2 &gt;= limit){
+            continue;
+        }
+        int left = parentIdx * 2;       //左子节点位置
+        int right = (left + 1) &gt;= limit ? left : (left + 1);    //右子节点位置，如果没有右节点，默认为左节点位置
+
+        int maxChildId = arr[left] &gt;= arr[right] ? left : right;
+        if(arr[maxChildId] &gt; arr[parentIdx]){   //交换父节点与左右子节点中的最大值
+            int temp = arr[parentIdx];
+            arr[parentIdx] = arr[maxChildId];
+            arr[maxChildId] = temp;
+        }
+    }
+    System.out.println(&quot;Max_Heapify: &quot; + Arrays.toString(arr));
+}
+</code></pre><h4 id="优缺点-7"><a href="#优缺点-7" class="headerlink" title="优缺点"></a>优缺点</h4><blockquote>
+<p>由于它在直接选择排序的基础上利用了比较结果形成。效率提高很大。它完成排序的总比较次数为O(nlog2n)。它是对数据的有序性不敏感的一种算法。但堆排序将需要做两个步骤：－是建堆，二是排序（调整堆）。所以一般在小规模的序列中不合适，但对于较大的序列，将表现出优越的性能。</p>
+</blockquote>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="ieiang.github.io">ieiang</a>
+            <p>原文链接：<a href="ieiang.github.io/2018/07/10/8种常用排序算法总结/">ieiang.github.io/2018/07/10/8种常用排序算法总结/</a>
+            <p>发表日期：<a href="ieiang.github.io/2018/07/10/8种常用排序算法总结/">July 10th 2018, 11:13:13 pm</a>
+            <p>更新日期：<a href="ieiang.github.io/2018/07/10/8种常用排序算法总结/">July 10th 2018, 11:55:49 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/07/15/Java中的锁/" title= "Java中的锁">
+                    <div class="nextTitle">Java中的锁</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/07/10/Hexo-GitPage搭建个人博客/" title= "Hexo+GitPage搭建个人博客">
+                    <div class="prevTitle">Hexo+GitPage搭建个人博客</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="/github.com/ieiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#稳定性"><span class="toc-number">1.</span> <span class="toc-text">稳定性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#各排序算法的稳定性"><span class="toc-number">1.1.</span> <span class="toc-text">各排序算法的稳定性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#各排序算法优劣"><span class="toc-number">2.</span> <span class="toc-text">各排序算法优劣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序算法"><span class="toc-number">3.</span> <span class="toc-text">排序算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-插入排序"><span class="toc-number">3.1.</span> <span class="toc-text">1.插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述"><span class="toc-number">3.1.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现"><span class="toc-number">3.1.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点"><span class="toc-number">3.1.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-选择排序"><span class="toc-number">3.2.</span> <span class="toc-text">2.选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-1"><span class="toc-number">3.2.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-冒泡排序"><span class="toc-number">3.3.</span> <span class="toc-text">3.冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-2"><span class="toc-number">3.3.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-快速排序"><span class="toc-number">3.4.</span> <span class="toc-text">4.快速排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-3"><span class="toc-number">3.4.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-3"><span class="toc-number">3.4.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-归并排序"><span class="toc-number">3.5.</span> <span class="toc-text">5.归并排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-4"><span class="toc-number">3.5.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-4"><span class="toc-number">3.5.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-4"><span class="toc-number">3.5.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-希尔排序"><span class="toc-number">3.6.</span> <span class="toc-text">6.希尔排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-5"><span class="toc-number">3.6.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-5"><span class="toc-number">3.6.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-5"><span class="toc-number">3.6.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-基数排序"><span class="toc-number">3.7.</span> <span class="toc-text">7.基数排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-6"><span class="toc-number">3.7.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-6"><span class="toc-number">3.7.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-6"><span class="toc-number">3.7.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-堆排序"><span class="toc-number">3.8.</span> <span class="toc-text">8.堆排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#算法描述-7"><span class="toc-number">3.8.1.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码实现-7"><span class="toc-number">3.8.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优缺点-7"><span class="toc-number">3.8.3.</span> <span class="toc-text">优缺点</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 4
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/15</span><a class="archive-post-title" href= "/2018/07/15/Spring事务/" >Spring事务</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/15</span><a class="archive-post-title" href= "/2018/07/15/Java中的锁/" >Java中的锁</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/10</span><a class="archive-post-title" href= "/2018/07/10/8种常用排序算法总结/" >8种常用排序算法总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/10</span><a class="archive-post-title" href= "/2018/07/10/Hexo-GitPage搭建个人博客/" >Hexo+GitPage搭建个人博客</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="Hexo"><span class="iconfont-archer">&#xe606;</span>Hexo</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "ieiang"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
